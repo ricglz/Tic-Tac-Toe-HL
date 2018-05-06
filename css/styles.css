@@ -1,0 +1,30 @@
+#board {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.big-box{
+  height: 150px;
+  border: 2.5px solid black;
+  padding: 0px;
+}
+
+.box {
+  border: 1px solid black;
+  font-size: 33px;
+  text-align: center;
+  height: 50px;
+}
+
+.X{
+  color: #E44;
+}
+
+.O{
+  color: #44E;
+}
+
+.btn-danger{
+  background-color: blue;
+  border-color: black;
+}
