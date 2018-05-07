@@ -81,6 +81,7 @@ var apply = function($box){
     moves+=1;
     var winner = getWinner();
     if(winner){
+        changeScore($('.oScore').eq(0));
         alert("Player " + winner + " has won.");
         resetGame();
     } else if (moves < 81){

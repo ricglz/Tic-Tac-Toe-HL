@@ -5,6 +5,12 @@ var whiteEverything = function(){
     }
 }
 
+var changeScore = function($oldScore){
+    var score = $oldScore.text();
+    score++;
+    $oldScore.text(score);
+}
+
 //Reset the variable for a new game
 var resetGame = function(){
     $boxes.text("");

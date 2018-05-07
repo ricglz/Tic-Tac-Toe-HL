@@ -1,12 +1,13 @@
+var $bigBoxes;
 var $boxes;
+var $sp;
+var $lmp;
 var xQuantitys = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-var $bigBoxes = $('.big-box');
 var turn = 'X';
 var moves = 0;
 var bigBoxPos = 0;
 var firstTurn = true;
-var $sp;
-var $lmp;
+
 
 $(document).ready(function() {
     $sp = $('.single-player');
@@ -32,6 +33,12 @@ $(document).ready(function() {
             var winner = getWinner();
             if(winner){
                 alert("Player " + winner + " has won.");
+                if(winner==="X"){
+                    changeScore($('.xScore').eq(0));
+                }
+                else{
+                    changeScore($('.oScore').eq(0));
+                }
                 resetGame();
             } else if (moves < 81){
                 changeColors($(this));

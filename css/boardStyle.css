@@ -1,6 +1,33 @@
+* {
+  font-family: 'Montserrat', 'Roboto';
+}
+
 #board {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.oScore{
+  margin-right: 2%;
+}
+
+.oSign, .oScore{
+  color: #44E;
+  float: right;
+}
+
+.xSign{
+  margin-left: 2%;
+}
+
+.xScore, .xSign{
+  color: #E44;
+  float: left;
+}
+
+a{
+  color: #111;
+  font-size: 150%;
 }
 
 hr{
