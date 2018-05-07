@@ -75,8 +75,8 @@ var Game = function(){
     var rownWin = function(){
         var upperRow = allThree($boxes.eq(0 + bigBoxPos*9), $boxes.eq(3 + bigBoxPos*9), $boxes.eq(6 + bigBoxPos*9)),
             middleRow = allThree($boxes.eq(1 + bigBoxPos*9), $boxes.eq(4 + bigBoxPos*9), $boxes.eq(7 + bigBoxPos*9)),
-            bottonRow = allThree($boxes.eq(2 + bigBoxPos*9), $boxes.eq(5 + bigBoxPos*9), $boxes.eq(8 + bigBoxPos*9));
-        return upperRow || (middleRow || bottonRow);
+            bottomRow = allThree($boxes.eq(2 + bigBoxPos*9), $boxes.eq(5 + bigBoxPos*9), $boxes.eq(8 + bigBoxPos*9));
+        return upperRow || (middleRow || bottomRow);
     }
 
     var getWinner = function(){
@@ -85,17 +85,48 @@ var Game = function(){
 
     //AI functions
 
-    var almostAWinValue = function($bigBox){
-        return almostAWinValueDiagonal() + almostAWinValueRow() + almostAWinValueColumn();
+    var couldWin = function($firstBox, $secondBox, $thirdBox){
+        var sum = 0;
+        if($firstBox.text()==="X") sum++;
+        else if($firstBox.text==="O") return false;
+        if($secondBox.text()==="X") sum++;
+        else if($secondBox.text==="O") return false;
+        if($thirdBox.text()==="X") sum++;
+        else if($thirdBox.text==="O") return false;
+        return sum == 2;
+    };
+
+    var almostAWinValueDiagonal = function($bigBox){
+        var leftDiagonal = couldWin($bigBox.find('#0'), $bigBox.find('#4'), $bigBox.find('#8'));
+            rightDiagonal = couldWin($bigBox.find('#2'), $bigBox.find('#4'), $bigBox.find('#6'));
+        return leftDiagonal  + rightDiagonal;
+    };
+
+    var almostAWinValueColumn = function($bigBox){
+        var leftColumn = couldWin($bigBox.find('#0'), $bigBox.find('#3'), $bigBox.find('#6'));
+            middleColumn = couldWin($bigBox.find('#1'), $bigBox.find('#4'), $bigBox.find('#7'));
+            rightColumn = couldWin($bigBox.find('#2'), $bigBox.find('#5'), $bigBox.find('#8'));
+        return (leftColumn + middleColumn) + rightColumn;
     }
+
+    var almostAWinValueRow = function($bigBox){
+        var upperRow = couldWin($bigBox.find('#0'), $bigBox.find('#1'), $bigBox.find('#2'));
+            middleRow = couldWin($bigBox.find('#3'), $bigBox.find('#4'), $bigBox.find('#5'));
+            bottomRow = couldWin($bigBox.find('#6'), $bigBox.find('#7'), $bigBox.find('#8'));
+        return (upperRow + middleRow) + bottomRow;
+    }
+
+    var almostAWinValue = function($bigBox){
+        return almostAWinValueDiagonal($bigBox) + almostAWinValueRow($bigBox) + almostAWinValueColumn($bigBox);
+    };
 
     var lessPriority = function($firstBox, $secondBox){
         firstBigBoxPos = $firstBox.attr('id');
         secondBigBoxPos = $secondBox.attr('id');
-        if(xQuantitys[firstBigBoxPos] > xQuantitys[secondBigBoxPos]){
+        if((xQuantitys[firstBigBoxPos] > xQuantitys[secondBigBoxPos]) 
+            || (almostAWinValue($firstBox) > almostAWinValue($secondBox))){
             return true;
         }
-
         return false;
     };
 
@@ -106,9 +137,7 @@ var Game = function(){
             for(var j = 0; j < pos.length-i-1; j++){
                 if(lessPriority($boxes.eq(pos[j]), $boxes.eq(pos[j+1]))){
                     change = true;
-                    pos[j]^=pos[j+1];
-                    pos[j+1]^=pos[j];
-                    pos[j]^=pos[j+1];
+                    pos.splice(j, 1);
                 }
             }
         }
@@ -123,11 +152,8 @@ var Game = function(){
             }
         }
         pos = arrange(pos);
-        if(firstTurn){
-            firstTurn = false;
-            return pos[Math.floor(Math.random() * pos.length)];
-        }
-        return pos[0];
+        return pos[Math.floor(Math.random() * pos.length)];
+        
     }
 
     var apply = function($box){
@@ -168,13 +194,13 @@ var Game = function(){
             $(this).addClass(turn);
             moves+=1;
             if(!firstTurn) xQuantitys[bigBoxPos]++;
+            firstTurn = false;
             var winner = getWinner();
             if(winner){
                 alert("Player " + winner + " has won.");
                 resetGame();
             } else if (moves < 81){
                 changeColors($(this));
-                
                 if($('html').hasClass('ai')){
                     move();
                 }
