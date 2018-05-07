@@ -2,5 +2,19 @@
 $(document).ready(function() {
   // all code to manipulate the DOM
   // goes inside this function
-  game = new Game(true);
+
+  var $sp = $('.single-player');
+  var $lmp = $('.local-multiplayer');
+
+
+  $sp.on('click', function(){
+    game = new Game(true);
+    window.location.href = "spBoard.html";
+  });
+
+  $lmp.on('click', function(){
+    game = new Game(false);
+    window.location.href = "board.html";
+  });
+
 });

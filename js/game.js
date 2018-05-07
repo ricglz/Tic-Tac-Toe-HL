@@ -1,4 +1,4 @@
-var Game = function(value){
+var Game = function(){
 
     //Attributes
     var $boxes = $('.box');
@@ -8,11 +8,10 @@ var Game = function(value){
     var moves = 0;
     var bigBoxPos = 0;
     var firstTurn = true;
-    var singlePlayer = value;
 
     //Helper functions
 
-    //Human functions
+    //Logic functions
 
     var whiteEverything = function(){
         for(var x = 0; x < 9; x++){
@@ -86,18 +85,34 @@ var Game = function(value){
 
     //AI functions
 
+    var almostAWinValue = function($bigBox){
+        return almostAWinValueDiagonal() + almostAWinValueRow() + almostAWinValueColumn();
+    }
+
+    var lessPriority = function($firstBox, $secondBox){
+        firstBigBoxPos = $firstBox.attr('id');
+        secondBigBoxPos = $secondBox.attr('id');
+        if(xQuantitys[firstBigBoxPos] > xQuantitys[secondBigBoxPos]){
+            return true;
+        }
+
+        return false;
+    };
+
     var arrange = function(pos){
         var change = true;
         for(var i = 0; i < pos.length-1 && change; i++){
             change = false;
             for(var j = 0; j < pos.length-i-1; j++){
-                if(xQuantitys[$boxes.eq(pos[j]).attr('id')] > xQuantitys[$boxes.eq(pos[j+1]).attr('id')]){
+                if(lessPriority($boxes.eq(pos[j]), $boxes.eq(pos[j+1]))){
+                    change = true;
                     pos[j]^=pos[j+1];
                     pos[j+1]^=pos[j];
                     pos[j]^=pos[j+1];
                 }
             }
         }
+        return pos;
     };
 
     var decide = function(){
@@ -107,8 +122,12 @@ var Game = function(value){
                 pos.push(x);
             }
         }
-        arrange(pos);
-        return pos[Math.floor(Math.random() * pos.length)];
+        pos = arrange(pos);
+        if(firstTurn){
+            firstTurn = false;
+            return pos[Math.floor(Math.random() * pos.length)];
+        }
+        return pos[0];
     }
 
     var apply = function($box){
@@ -142,19 +161,18 @@ var Game = function(value){
     $boxes.on('click', function(){
         var contains = $.contains($bigBoxes.get(bigBoxPos), $(this).get(0));
         if(($(this).text() === "" && contains) || firstTurn){
-            if(firstTurn){
-                firstTurn = false;
-            }
             $(this).text(turn);
             $(this).addClass(turn);
             moves+=1;
+            if(!firstTurn) xQuantitys[bigBoxPos]++;
             var winner = getWinner();
             if(winner){
                 alert("Player " + winner + " has won.");
                 resetGame();
             } else if (moves < 81){
                 changeColors($(this));
-                if(singlePlayer){
+                
+                if($('html').hasClass('ai')){
                     move();
                 }
                 else{
@@ -168,3 +186,9 @@ var Game = function(value){
         }
     });
 }
+
+$(document).ready(function() {
+
+    game = new Game();
+
+});
