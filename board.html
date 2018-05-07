@@ -11,6 +11,8 @@
 
     <!-- link to custom stylesheet (always require after Bootstrap) -->
 
+    <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto" rel="stylesheet"> 
+    
     <link rel="stylesheet" href="css/boardStyle.css">
 
     <!-- jQuery from CDN -->
@@ -28,13 +30,17 @@
   </head>
   <body>
     <div class="container text-center">
-        <div class="row">
+      <div class="row">
           <div class="col-md-12">
-            <h1>Tic Tac Toe - Higher level</h1>
+            <h1>Local mutiplayer</h1>
+            <h2>Score</h2>
+            <a class="oScore">0<a class="oSign">O =&nbsp</a> </a>
+            <a class="xSign">X = &nbsp<a class="xScore">0</a> </a>
+            <br>
             <hr>
           </div>
-        </div>
-        <div class="row">
+      </div>
+      <div class="row">
           <div class="col-md-6 col-md-offset-3" id="board">
             <div class="row">
               <div class="col-xs-4 big-box">
@@ -142,14 +148,14 @@
               </div>
             </div>
           </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <hr>
+          <button class="btn btn-lg btn-danger" id="reset">Reset</button>
+          <button class="btn btn-lg btn-danger" id="back">Back</button>
         </div>
-        <div class="row">
-          <div class="col-md-12">
-            <hr>
-            <button class="btn btn-lg btn-danger" id="reset">Reset</button>
-            <button class="btn btn-lg btn-danger" id="back">Back</button>
-          </div>
-        </div>
+      </div>
     </div>
   </body>
 </html>
