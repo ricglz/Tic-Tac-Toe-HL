@@ -157,6 +157,9 @@ var Game = function(){
     $('#reset').on('click', function(){
         resetGame();
     });
+    $('#back').on('click', function(){
+        window.location.href = "index.html";
+    });
 
     $boxes.on('click', function(){
         var contains = $.contains($bigBoxes.get(bigBoxPos), $(this).get(0));
