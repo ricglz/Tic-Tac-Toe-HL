@@ -31,6 +31,10 @@ $(document).ready(function() {
     }
   }
 
+  var changeColor = function($bigBox, color){
+    $bigBox.css("background-color", color);
+  }
+
   var allThree = function($firstBox, $secondBox, $thirdBox){
     var firstText = $firstBox.text(),
         secondText = $secondBox.text(),
@@ -91,7 +95,12 @@ $(document).ready(function() {
          resetGame();
       } else if (moves < 81){
         changeTurn();
+        changeColor($bigBoxes.eq(bigBoxPos), "white");
+        if($bigBoxes.eq(bigBoxPos).css('background-color')==="rgb(255, 255, 255)"){
+          console.log("jalo");
+        }
         bigBoxPos =  $(this).attr('id');
+        changeColor($bigBoxes.eq(bigBoxPos), "#777");
       }
       else{
         alert("Neither player won.");
