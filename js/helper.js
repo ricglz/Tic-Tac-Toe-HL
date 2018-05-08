@@ -22,7 +22,7 @@ var apply = function($box){
         bigBoxPos++;
         contains = $.contains($bigBoxes.get(bigBoxPos), $box.get(0));
     }
-    xQuantitys[bigBoxPos]++;
+    if(turn==='X') xQuantitys[bigBoxPos]++;
     board[bigBoxPos][$box.attr('id')] = turn;
     firstTurn = false;
     var winner = getWinner();

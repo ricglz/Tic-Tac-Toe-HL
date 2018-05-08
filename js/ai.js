@@ -38,41 +38,55 @@ var almostAWinValue = function($bigBox){
     return almostAWinValueDiagonal($bigBox) + almostAWinValueRow($bigBox) + almostAWinValueColumn($bigBox);
 };
 
-//Checks if the firstbox has a less pririty than the second, therefore that is less important
-var lessPriority = function($firstBox, $secondBox){
-    firstBigBoxPos = $firstBox.attr('id');
-    secondBigBoxPos = $secondBox.attr('id');
-    if(xQuantitys[firstBigBoxPos] > xQuantitys[secondBigBoxPos]){
-        return true;
-    }
-    return almostAWinValue($firstBox) > almostAWinValue($secondBox);
+var hasLessX = function(firstBox, secondBox){
+    var firstBigBoxPos = $boxes.eq(firstBox).attr('id');
+    var secondBigBoxPos = $boxes.eq(secondBox).attr('id');
+    return xQuantitys[firstBigBoxPos] < xQuantitys[secondBigBoxPos];
 };
 
-//Arrange the values
-var arrange = function(pos){
-    var change = true;
-    for(var i = 0; i < pos.length-1 && change; i++){
-        change = false;
-        for(var j = 0; j < pos.length-i-1; j++){
-            if(lessPriority($boxes.eq(pos[j]), $boxes.eq(pos[j+1]))){
-                change = true;
-                pos.splice(j, 1);
-            }
-        }
+var different = function(boxArray){
+    var min = xQuantitys[$boxes.eq(boxArray[0]).attr('id')],
+        erasePos = 1;
+    while(erasePos < boxArray.length && min == xQuantitys[$boxes.eq(boxArray[erasePos]).attr('id')]){
+        erasePos++;
     }
-    return pos;
+    return erasePos;
+};
+
+var print = function(boxArray){
+    for(var x = 0; x < boxArray.length; x++){
+        console.log(xQuantitys[$boxes.eq(boxArray[x]).attr('id')]);
+    }
+}
+
+var deleteElements = function(boxArray){
+    if(boxArray.length==1) return boxArray;
+    if(boxArray.length==2){
+        if(hasLessX(boxArray[0], boxArray[1])) return boxArray[0];
+        return boxArray[1];
+    }
+    boxArray.sort(function(a, b){
+        if(hasLessX(a, b)) return -1;
+        if(hasLessX(b, a)) return 1;
+        return 0;
+    });
+    var erasePos = different(boxArray);
+    if(erasePos < boxArray.length){
+        boxArray.splice(erasePos, boxArray.length-erasePos);
+    }
+    print(boxArray);
+    return boxArray;
 };
 
 var decide = function(){
-    var pos = [];
+    var boxArray = [];
     for(var x = 0 + bigBoxPos*9; x < 9 + bigBoxPos*9; x++){
         if($boxes.eq(x).text()===""){
-            pos.push(x);
+            boxArray.push(x);
         }
     }
-    pos = arrange(pos);
-    return pos[Math.floor(Math.random() * pos.length)];
-    
+    boxArray = deleteElements(boxArray);
+    return boxArray[Math.floor(Math.random() * boxArray.length)];
 }
 
 var move = function(){
