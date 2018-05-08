@@ -75,24 +75,6 @@ var decide = function(){
     
 }
 
-var apply = function($box){
-    $box.text("O");
-    $box.addClass("O");
-    moves+=1;
-    var winner = getWinner();
-    if(winner){
-        changeScore($('.oScore').eq(0));
-        alert("Player " + winner + " has won.");
-        resetGame();
-    } else if (moves < 81){
-        changeColors($box);
-    }
-    else{
-        alert("Neither player won.");
-        resetGame();
-    }
-};
-
 var move = function(){
     var cell = decide();
     apply($boxes.eq(cell));
