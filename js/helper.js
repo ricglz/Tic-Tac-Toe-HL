@@ -5,11 +5,46 @@ var whiteEverything = function(){
     }
 }
 
+//Change score
 var changeScore = function($oldScore){
     var score = $oldScore.text();
     score++;
     $oldScore.text(score);
 }
+
+//Apply movement
+var apply = function($box){
+    $box.text(turn);
+    $box.addClass(turn);
+    moves+=1;
+    var contains = $.contains($bigBoxes.get(bigBoxPos), $box.get(0));
+    while(!contains && bigBoxPos < 8){
+        bigBoxPos++;
+        contains = $.contains($bigBoxes.get(bigBoxPos), $box.get(0));
+    }
+    xQuantitys[bigBoxPos]++;
+    board[bigBoxPos][$box.attr('id')] = turn;
+    firstTurn = false;
+    var winner = getWinner();
+    if(winner){
+        alert("Player " + winner + " has won.");
+        if(winner==="X"){
+            changeScore($('.xScore').eq(0));
+        } else{
+            changeScore($('.oScore').eq(0));
+        }
+        resetGame();
+    } else if (moves < 81){
+        changeColors($box);
+        changeTurn();
+        if(turn === "O" && $('html').hasClass('ai')){
+            move();
+        }
+    } else{
+        alert("Neither player won.");
+        resetGame();
+    }
+};
 
 //Reset the variable for a new game
 var resetGame = function(){
