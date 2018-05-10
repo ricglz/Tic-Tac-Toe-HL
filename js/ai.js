@@ -68,18 +68,19 @@ var extraValue = function(pos){
 }
 
 var valueOccupied = function(pos){
-    if(dontTouchBigBox[pos]==="X") return -35;
-    else if(dontTouchBigBox[pos]==="O") return -20;
+    if(dontTouchBigBox[pos]==="X") return 35;
+    else if(dontTouchBigBox[pos]==="O") return 20;
     return 0;
 }
 
 var howManyX = function(pos){
-    return -xQuantitys[pos];
+    return xQuantitys[pos]*-1;
 }
 
 var howMuchValue = function(pos){
     var extra = extraValue(pos);
     extra -= valueOccupied();
+    if(pos === bigBoxPos) extra-=35;
     return howManyX(pos) + extra;
 
 }
@@ -126,11 +127,11 @@ var createactionArray = function(){
 var decide = function(){
     var actionArray = createactionArray();
     actionArray = deleteElements(actionArray);
+    print(actionArray);
     return actionArray[Math.floor(Math.random() * actionArray.length)].movePosition;
 };
 
 var move = function(){
     var cell = decide();
-    console.log('aqui?');
     apply($boxes.eq(cell));
 };
