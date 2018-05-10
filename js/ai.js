@@ -64,7 +64,13 @@ var extraValueColumn = function(pos){
 }
 
 var extraValue = function(pos){
-    return (extraValueColumn(pos) || extraValueRow(pos)) || extraValueDiagonal(pos);
+    return (extraValueColumn(pos) + extraValueRow(pos)) + extraValueDiagonal(pos);
+}
+
+var valueOccupied = function(pos){
+    if(dontTouchBigBox[pos]==="X") return -35;
+    else if(dontTouchBigBox[pos]==="O") return -20;
+    return 0;
 }
 
 var howManyX = function(pos){
@@ -72,10 +78,8 @@ var howManyX = function(pos){
 }
 
 var howMuchValue = function(pos){
-    if(extraValue(pos)){
-        return 100;
-    }
-    var extra = 0;
+    var extra = extraValue(pos);
+    extra -= valueOccupied();
     return howManyX(pos) + extra;
 
 }
@@ -127,5 +131,6 @@ var decide = function(){
 
 var move = function(){
     var cell = decide();
+    console.log('aqui?');
     apply($boxes.eq(cell));
 };
