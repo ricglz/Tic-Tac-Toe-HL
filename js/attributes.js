@@ -4,7 +4,7 @@ var $bigBoxes;
 var $boxes;
 var $sp;
 var $lmp;
-var xQuantitys = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+var amountOccupied = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 var dontTouchBigBox = ["", "", "", "", "", "", "", "", ""];
 var board = new Array(9);
 var turn = 'X';

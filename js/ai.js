@@ -1,37 +1,41 @@
-
+//Constructor for the aiAction object. aiAction has the attributes of the box, its id 
+//and the value or weight of that action. The bigger the weight it is more probable to 
+//be chosen as the action to make
 function aiAction(pos){
 
     //Atributes
-    this.movePosition = pos;
     this.$box = $boxes.eq(pos);
     this.id = this.$box.attr('id');
     this.value = howMuchValue(this.id);
 };
 
+//Identifies which letter are the one near it and if it would be more valuable to do the move or not
 var whatAreBoth = function(column1, column2){
-    if(board[bigBoxPos][column1]===board[bigBoxPos][column2]){
-        if(board[bigBoxPos][column1]==="X") return 10;
-        else if(board[bigBoxPos][column1]==="O") return 1000;
+    var text1 = board[bigBoxPos][column1]  
+        text2 = board[bigBoxPos][column2];
+    if(text1===text2){
+        if(text1==="X") return 5;
+        if(text2==="O") return 90;
     }
+    if((text1 === "X" && !isOccupied(text2)) || (text2 === "X" && !isOccupied(text1))) return 2;
+    if((text1 === "O" && !isOccupied(text2)) || (text2 === "O" && !isOccupied(text1))) return 3;
     return 0;
-}
+};
 
-var extraValueDiagonal = function(pos){
-    if(pos == 1 || pos == 3 || pos == 5 || pos == 7) return 0;
-    if(pos == 4){
-        return whatAreBoth(0, 8) || whatAreBoth(2, 6);
-    }
-    if(Math.floor(pos/3)==0){
+//Checks if the position chosen could stop a winning of the oponent or if itself could win in diagonal
+var extraValueDiagonal = function(div, pos){
+    if(pos === 1 || pos === 3 || pos === 5 || pos === 7) return 0;
+    if(pos == 4) return whatAreBoth(0, 8) || whatAreBoth(2, 6);
+    if(div!=0){
         if(pos == 8) return whatAreBoth(0, 4);
         return whatAreBoth(2, 4);
     }
     if(pos == 0) return whatAreBoth(4, 8);
     return whatAreBoth(4, 6);
-}
+};
 
-var extraValueRow = function(pos){
-    var mod = pos%3;
-    var div = Math.floor(pos/3);
+//Checks if the position chosen could stop a winning of the oponent or if itself could win in a row
+var extraValueRow = function(div, mod){
     switch(div){
         case 0: if(mod==0) return whatAreBoth(1, 2);
             if(mod==1) return whatAreBoth(0, 2);
@@ -45,12 +49,11 @@ var extraValueRow = function(pos){
             if(mod==1) return whatAreBoth(6, 8);
             return whatAreBoth(6, 7); break;
     }
-}
+};
 
-var extraValueColumn = function(pos){
-    var div = Math.floor(pos/3);
-    var mod = pos%3;
-    switch(pos%3){
+//Checks if the position chosen could stop a winning of the oponent or if itself could win in a column
+var extraValueColumn = function(div, mod){
+    switch(mod){
         case 0: if(div==0) return whatAreBoth(3, 6);
             if(div==1) return whatAreBoth(0, 6);
             return whatAreBoth(0, 3); break;
@@ -61,30 +64,35 @@ var extraValueColumn = function(pos){
             if(div==1) return whatAreBoth(2, 8);
             return whatAreBoth(2, 5); break;
     }
-}
+};
 
+//Checks if the position chosen could stop a winning of the oponent or if itself could win
 var extraValue = function(pos){
-    return (extraValueColumn(pos) + extraValueRow(pos)) + extraValueDiagonal(pos);
+    var div = Math.floor(pos/3),
+        mod = pos%3;
+    return extraValueColumn(div, mod) + extraValueRow(div, mod) + extraValueDiagonal(div, pos);
 }
 
+//Checks if in certain big box the opponent could win or if itself could win.
 var valueOccupied = function(pos){
-    if(dontTouchBigBox[pos]==="X") return 35;
-    else if(dontTouchBigBox[pos]==="O") return 20;
+    if(dontTouchBigBox[pos]==="X") return 9;
+    else if(dontTouchBigBox[pos]==="O") return 1;
     return 0;
-}
+};
 
-var howManyX = function(pos){
-    return xQuantitys[pos]*-1;
-}
+//Checks if the chosen pos could allow the other player to play in the same box.
+//Ex. while it is in the middle big-box, it is avaible the middle box as an action
+var valueRecursive = function(pos){
+    if(pos === bigBoxPos) return 4;
+    return 0;
+};
 
+//Determine much is the value of the action
 var howMuchValue = function(pos){
-    var extra = extraValue(pos);
-    extra -= valueOccupied();
-    if(pos === bigBoxPos) extra-=35;
-    return howManyX(pos) + extra;
+    return extraValue(pos) - amountOccupied[pos] - valueOccupied(pos) - valueRecursive(pos);
+};
 
-}
-
+//Checks which are the more factible actions to play
 var different = function(actionArray){
     var min = actionArray[0].value,
         erasePos = 1;
@@ -94,12 +102,14 @@ var different = function(actionArray){
     return erasePos;
 };
 
+//Prints the value of x
 var print = function(actionArray){
     for(var x = 0; x < actionArray.length; x++){
         console.log(actionArray[x].value)
     }
 };
 
+//Delete the elements with less value than the rest
 var deleteElements = function(actionArray){
     if(actionArray.length > 1){
         actionArray.sort(function(a, b){
@@ -113,7 +123,8 @@ var deleteElements = function(actionArray){
     return actionArray;
 };
 
-var createactionArray = function(){
+//Create an array which contains aiActions
+var createActionArray = function(){
     var actionArray = [];
     var aux = bigBoxPos*9;
     for( var x = 0 + aux; x < 9 + aux; x++){
@@ -124,13 +135,15 @@ var createactionArray = function(){
     return actionArray;
 };
 
+//Decide which action to take
 var decide = function(){
-    var actionArray = createactionArray();
+    var actionArray = createActionArray();
     actionArray = deleteElements(actionArray);
-    return actionArray[Math.floor(Math.random() * actionArray.length)].movePosition;
+    return actionArray[Math.floor(Math.random() * actionArray.length)].$box;
 };
 
+//Makes a move
 var move = function(){
-    var cell = decide();
-    apply($boxes.eq(cell));
+    var $box = decide();
+    apply($box);
 };
