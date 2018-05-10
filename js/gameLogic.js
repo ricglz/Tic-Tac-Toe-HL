@@ -109,6 +109,10 @@ var resetGame = function(){
     turn = 'X';
     moves = 0;
     firstTurn = true;
+    amountOccupied = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    dontTouchBigBox = ["", "", "", "", "", "", "", "", ""];
+    board = new Array(9);
+    constructBoard();
 };
 
 //If is a multiplayer it allows to change the turn
