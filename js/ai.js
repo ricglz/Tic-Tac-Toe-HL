@@ -127,7 +127,6 @@ var createactionArray = function(){
 var decide = function(){
     var actionArray = createactionArray();
     actionArray = deleteElements(actionArray);
-    print(actionArray);
     return actionArray[Math.floor(Math.random() * actionArray.length)].movePosition;
 };
 
