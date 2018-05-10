@@ -1,9 +1,15 @@
 //Erases the color of the big-boxes
+var greyEverything = function(){
+    for(var x = 0; x < 9; x++){
+        changeColor($bigBoxes.eq(x), "#999");
+    }
+};
+
 var whiteEverything = function(){
     for(var x = 0; x < 9; x++){
         changeColor($bigBoxes.eq(x), "white");
     }
-}
+};
 
 //Change score
 var changeScore = function($oldScore){
@@ -12,10 +18,25 @@ var changeScore = function($oldScore){
     $oldScore.text(score);
 }
 
+function fadeIn($box, time) {
+    $box.css('opacity', 0);
+    var last = +new Date();
+    var tick = function() {
+        $box.css('opacity', +$box.css('opacity')+ (new Date() - last) / time);
+        last = +new Date();
+        if (+$box.css('opacity') < 1) {
+            (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16);
+        }
+    };
+  
+    tick();
+}
+
 //Apply movement
 var apply = function($box){
     $box.text(turn);
     $box.addClass(turn);
+    if(turn === 'O' && $('html').hasClass('ai') )fadeIn($box, 500);
     moves+=1;
     var contains = $.contains($bigBoxes.get(bigBoxPos), $box.get(0));
     while(!contains && bigBoxPos < 8){
@@ -24,6 +45,9 @@ var apply = function($box){
     }
     if(turn==='X') xQuantitys[bigBoxPos]++;
     board[bigBoxPos][$box.attr('id')] = turn;
+    if(firstTurn){
+        greyEverything();
+    }
     firstTurn = false;
     var winner = getWinner();
     if(winner){
@@ -73,9 +97,9 @@ var changeColor = function($bigBox, color){
 
 //To turn white the old big-box and turn grey the new one.
 var changeColors = function($box){
-    changeColor($bigBoxes.eq(bigBoxPos), "white");
+    changeColor($bigBoxes.eq(bigBoxPos), "#999");
     bigBoxPos =  $box.attr('id');
-    changeColor($bigBoxes.eq(bigBoxPos), "#777");
+    changeColor($bigBoxes.eq(bigBoxPos), "white");
 }
 
 //Validate that three boxes has the same element and is not empty

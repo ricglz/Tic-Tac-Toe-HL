@@ -2,6 +2,7 @@
 
 var $bigBoxes;
 var $boxes;
+//var $lastPlay;
 var $sp;
 var $lmp;
 var xQuantitys = [0, 0, 0, 0, 0, 0, 0, 0, 0];

@@ -74,7 +74,7 @@ var deleteElements = function(boxArray){
     if(erasePos < boxArray.length){
         boxArray.splice(erasePos, boxArray.length-erasePos);
     }
-    print(boxArray);
+    //print(boxArray);
     return boxArray;
 };
 
