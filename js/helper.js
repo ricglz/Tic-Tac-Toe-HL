@@ -45,7 +45,6 @@ var apply = function($box){
     }
     if(turn==='X') xQuantitys[bigBoxPos]++;
     board[bigBoxPos][$box.attr('id')] = turn;
-    console.log(board);
     if(firstTurn){
         greyEverything();
     }
@@ -73,7 +72,7 @@ var apply = function($box){
 };
 
 var isOccupied = function(text){
-    return text === "X" || text === "0"
+    return text === "X" || text === "O";
 }
 
 var areTwo = function($firstBox, $secondBox, $thirdBox){
