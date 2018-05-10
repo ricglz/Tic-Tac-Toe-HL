@@ -45,6 +45,7 @@ var apply = function($box){
     }
     if(turn==='X') xQuantitys[bigBoxPos]++;
     board[bigBoxPos][$box.attr('id')] = turn;
+    console.log(board);
     if(firstTurn){
         greyEverything();
     }
