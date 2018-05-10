@@ -23,6 +23,7 @@ var apply = function($box){
         whereWasTheFirstMove($box);
     }
     amountOccupied[bigBoxPos]++;
+    if(turn === "X") amountOccupied[bigBoxPos]++;
     board[bigBoxPos][$box.attr('id')] = turn;
     if(firstTurn){
         greyEverything();
