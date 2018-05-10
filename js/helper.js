@@ -30,11 +30,17 @@ function fadeIn($box, time) {
 //Changes the color of a big-box
 var changeColor = function($bigBox, color){
     $bigBox.css("background-color", color);
-}
+};
 
 //To turn white the old big-box and turn grey the new one.
 var changeColors = function($box){
     changeColor($bigBoxes.eq(bigBoxPos), "#999");
     bigBoxPos =  $box.attr('id');
     changeColor($bigBoxes.eq(bigBoxPos), "white");
-}
+};
+
+function constructBoard(){
+    for(var i = 0; i < board.length; i++){
+        board[i] = new Array(9);
+    }
+};

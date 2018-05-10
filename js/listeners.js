@@ -4,9 +4,7 @@ $(document).ready(function() {
     $boxes = $('.box');
     $bigBoxes = $('.big-box');
 
-    for(var i = 0; i < board.length; i++){
-        board[i] = new Array(9);
-    }
+    constructBoard();
 
     $('#reset').on('click', function(){
         resetGame();
