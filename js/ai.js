@@ -1,42 +1,3 @@
-/*//Check if the other player can wins
-var couldWin = function($firstBox, $secondBox, $thirdBox){
-    var sum = 0;
-    if($firstBox.text()==="X") sum++;
-    else if($firstBox.text==="O") return false;
-    if($secondBox.text()==="X") sum++;
-    else if($secondBox.text==="O") return false;
-    if($thirdBox.text()==="X") sum++;
-    else if($thirdBox.text==="O") return false;
-    return sum == 2;
-};
-
-//Generates the value of winning in a Diagonal
-var almostAWinValueDiagonal = function($bigBox){
-    var leftDiagonal = couldWin($bigBox.find('#0'), $bigBox.find('#4'), $bigBox.find('#8'));
-        rightDiagonal = couldWin($bigBox.find('#2'), $bigBox.find('#4'), $bigBox.find('#6'));
-    return leftDiagonal  + rightDiagonal;
-};
-
-//Generates the value of winning in a Column
-var almostAWinValueColumn = function($bigBox){
-    var leftColumn = couldWin($bigBox.find('#0'), $bigBox.find('#3'), $bigBox.find('#6'));
-        middleColumn = couldWin($bigBox.find('#1'), $bigBox.find('#4'), $bigBox.find('#7'));
-        rightColumn = couldWin($bigBox.find('#2'), $bigBox.find('#5'), $bigBox.find('#8'));
-    return (leftColumn + middleColumn) + rightColumn;
-};
-
-//Generates the value of winning in a Row
-var almostAWinValueRow = function($bigBox){
-    var upperRow = couldWin($bigBox.find('#0'), $bigBox.find('#1'), $bigBox.find('#2'));
-        middleRow = couldWin($bigBox.find('#3'), $bigBox.find('#4'), $bigBox.find('#5'));
-        bottomRow = couldWin($bigBox.find('#6'), $bigBox.find('#7'), $bigBox.find('#8'));
-    return (upperRow + middleRow) + bottomRow;
-};
-
-//Generates the value of winning
-var almostAWinValue = function($bigBox){
-    return almostAWinValueDiagonal($bigBox) + almostAWinValueRow($bigBox) + almostAWinValueColumn($bigBox);
-};*/
 
 function aiAction(pos){
 
@@ -47,59 +8,63 @@ function aiAction(pos){
     this.value = howMuchValue(this.id);
 };
 
-var bothAreOs = function(column1, column2){
-    return (board[bigBoxPos][column1]==="O" && board[bigBoxPos][column1]===board[bigBoxPos][column2]);
+var whatAreBoth = function(column1, column2){
+    if(board[bigBoxPos][column1]===board[bigBoxPos][column2]){
+        if(board[bigBoxPos][column1]==="X") return 10;
+        else if(board[bigBoxPos][column1]==="O") return 1000;
+    }
+    return 0;
 }
 
-var canIWinDiagonal = function(pos){
-    if(pos == 1 || pos == 3 || pos == 5 || pos == 7) return false;
+var extraValueDiagonal = function(pos){
+    if(pos == 1 || pos == 3 || pos == 5 || pos == 7) return 0;
     if(pos == 4){
-        return bothAreOs(0, 8) || bothAreOs(2, 6);
+        return whatAreBoth(0, 8) || whatAreBoth(2, 6);
     }
     if(Math.floor(pos/3)==0){
-        if(pos == 8) return bothAreOs(0, 4);
-        return bothAreOs(2, 4);
+        if(pos == 8) return whatAreBoth(0, 4);
+        return whatAreBoth(2, 4);
     }
-    if(pos == 0) return bothAreOs(4, 8);
-    return bothAreOs(4, 6);
+    if(pos == 0) return whatAreBoth(4, 8);
+    return whatAreBoth(4, 6);
 }
 
-var canIWinRow = function(pos){
+var extraValueRow = function(pos){
     var mod = pos%3;
     var div = Math.floor(pos/3);
     switch(div){
-        case 0: if(mod==0) return bothAreOs(1, 2);
-            if(mod==1) return bothAreOs(0, 2);
-            return bothAreOs(0, 1); break;
-        case 1: if(mod==0) return bothAreOs(4, 5);
+        case 0: if(mod==0) return whatAreBoth(1, 2);
+            if(mod==1) return whatAreBoth(0, 2);
+            return whatAreBoth(0, 1); break;
+        case 1: if(mod==0) return whatAreBoth(4, 5);
             if(mod==1){
-                return bothAreOs(3, 5)
+                return whatAreBoth(3, 5)
             };
-            return bothAreOs(3, 4); break;
-        case 2: if(mod==0) return bothAreOs(7, 8);
-            if(mod==1) return bothAreOs(6, 8);
-            return bothAreOs(6, 7); break;
+            return whatAreBoth(3, 4); break;
+        case 2: if(mod==0) return whatAreBoth(7, 8);
+            if(mod==1) return whatAreBoth(6, 8);
+            return whatAreBoth(6, 7); break;
     }
 }
 
-var canIWinColumn = function(pos){
+var extraValueColumn = function(pos){
     var div = Math.floor(pos/3);
     var mod = pos%3;
     switch(pos%3){
-        case 0: if(div==0) return bothAreOs(3, 6);
-            if(div==1) return bothAreOs(0, 6);
-            return bothAreOs(0, 3); break;
-        case 1: if(div==0) return bothAreOs(4, 7);
-            if(div==1) return bothAreOs(1, 7);
-            return bothAreOs(1, 4); break;
-        case 2: if(div==0) return bothAreOs(5, 8);
-            if(div==1) return bothAreOs(2, 8);
-            return bothAreOs(2, 5); break;
+        case 0: if(div==0) return whatAreBoth(3, 6);
+            if(div==1) return whatAreBoth(0, 6);
+            return whatAreBoth(0, 3); break;
+        case 1: if(div==0) return whatAreBoth(4, 7);
+            if(div==1) return whatAreBoth(1, 7);
+            return whatAreBoth(1, 4); break;
+        case 2: if(div==0) return whatAreBoth(5, 8);
+            if(div==1) return whatAreBoth(2, 8);
+            return whatAreBoth(2, 5); break;
     }
 }
 
-var canIWin = function(pos){
-    return (canIWinColumn(pos) || canIWinRow(pos)) || canIWinDiagonal(pos);
+var extraValue = function(pos){
+    return (extraValueColumn(pos) || extraValueRow(pos)) || extraValueDiagonal(pos);
 }
 
 var howManyX = function(pos){
@@ -107,10 +72,10 @@ var howManyX = function(pos){
 }
 
 var howMuchValue = function(pos){
-    var extra = 0;
-    if(canIWin(pos)){
+    if(extraValue(pos)){
         return 100;
     }
+    var extra = 0;
     return howManyX(pos) + extra;
 
 }
