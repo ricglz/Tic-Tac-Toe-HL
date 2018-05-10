@@ -14,12 +14,13 @@ var whatAreBoth = function(column1, column2){
     var text1 = board[bigBoxPos][column1]  
         text2 = board[bigBoxPos][column2];
     if(text1===text2){
-        if(text1==="X") return 5;
-        if(text2==="O") return 90;
+        if(text1==="X") return 50;
+        if(text2==="O") return 9000;
     }
-    if((text1 === "X" && !isOccupied(text2)) || (text2 === "X" && !isOccupied(text1))) return 2;
-    if((text1 === "O" && !isOccupied(text2)) || (text2 === "O" && !isOccupied(text1))) return 3;
-    return 0;
+    var value = 0;
+    if((text1 === "X" && !isOccupied(text2)) || (text2 === "X" && !isOccupied(text1)))  value+=15;
+    if((text1 === "O" && !isOccupied(text2)) || (text2 === "O" && !isOccupied(text1))) value+=40;
+    return value;
 };
 
 //Checks if the position chosen could stop a winning of the oponent or if itself could win in diagonal
@@ -73,23 +74,16 @@ var extraValue = function(pos){
     return extraValueColumn(div, mod) + extraValueRow(div, mod) + extraValueDiagonal(div, pos);
 }
 
-//Checks if in certain big box the opponent could win or if itself could win.
-var valueOccupied = function(pos){
-    if(dontTouchBigBox[pos]==="X") return 9;
-    else if(dontTouchBigBox[pos]==="O") return 1;
-    return 0;
-};
-
 //Checks if the chosen pos could allow the other player to play in the same box.
 //Ex. while it is in the middle big-box, it is avaible the middle box as an action
 var valueRecursive = function(pos){
-    if(pos === bigBoxPos) return 4;
+    if(pos === bigBoxPos) return 20;
     return 0;
 };
 
 //Determine much is the value of the action
 var howMuchValue = function(pos){
-    return extraValue(pos) - amountOccupied[pos] - valueOccupied(pos) - valueRecursive(pos);
+    return extraValue(pos) - amountOccupied[pos] - dontTouchBigBox[pos] - valueRecursive(pos);
 };
 
 //Checks which are the more factible actions to play
@@ -105,7 +99,7 @@ var different = function(actionArray){
 //Prints the value of x
 var print = function(actionArray){
     for(var x = 0; x < actionArray.length; x++){
-        console.log(actionArray[x].value)
+        console.log(actionArray[x].id + ": " + actionArray[x].value);
     }
 };
 

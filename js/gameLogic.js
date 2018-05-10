@@ -23,7 +23,7 @@ var apply = function($box){
         whereWasTheFirstMove($box);
     }
     amountOccupied[bigBoxPos]++;
-    if(turn === "X") amountOccupied[bigBoxPos]++;
+    if(turn === "X") amountOccupied[bigBoxPos]+=2;
     board[bigBoxPos][$box.attr('id')] = turn;
     if(firstTurn){
         greyEverything();
@@ -56,19 +56,24 @@ var isOccupied = function(text){
     return text === "X" || text === "O";
 };
 
+var areTwoValue = function(text){
+    if(text === "X") return 90;
+    return 40;
+}
+
 //Checks if there is two occupied box with the same value and a third which is not
 var areTwo = function($firstBox, $secondBox, $thirdBox){
     var firstText = $firstBox.text(),
         secondText = $secondBox.text(),
         thirdText = $thirdBox.text();
     if((firstText === secondText) && isOccupied(firstText) && !isOccupied(thirdText)){
-        return firstText;
+        return areTwoValue(firstText);
     }
     if(firstText === thirdText && isOccupied(firstText) && !isOccupied(secondText) ){
-        return firstText;
+        return areTwoValue(firstText);
     }
     if(secondText === thirdText && isOccupied(secondText) && !isOccupied(firstText))
-        return secondText;
+        return areTwoValue(secondText);
     return null;
 };
 
@@ -76,7 +81,7 @@ var areTwo = function($firstBox, $secondBox, $thirdBox){
 var areTwoInTheDiagonal = function(){
     var leftDiagonal = areTwo($boxes.eq(0 + bigBoxPos*9), $boxes.eq(4 + bigBoxPos*9), $boxes.eq(8 + bigBoxPos*9)),
         rightDiagonal = areTwo($boxes.eq(2 + bigBoxPos*9), $boxes.eq(4 + bigBoxPos*9), $boxes.eq(6 + bigBoxPos*9));
-    return leftDiagonal || rightDiagonal;
+    return leftDiagonal + rightDiagonal;
 };
 
 //Check if there is almost a Column win
@@ -84,7 +89,7 @@ var areTwoInTheColumn = function(){
     var leftColumn = areTwo($boxes.eq(0 + bigBoxPos*9), $boxes.eq(1 + bigBoxPos*9), $boxes.eq(2 + bigBoxPos*9)),
         middleColumn = areTwo($boxes.eq(3 + bigBoxPos*9), $boxes.eq(4 + bigBoxPos*9), $boxes.eq(5 + bigBoxPos*9)),
         rightColumn = areTwo($boxes.eq(6 + bigBoxPos*9), $boxes.eq(7 + bigBoxPos*9), $boxes.eq(8 + bigBoxPos*9));
-    return leftColumn || (middleColumn || rightColumn);
+    return leftColumn + middleColumn + rightColumn;
 };
 
 //Check if there is almost a Row win
@@ -92,12 +97,18 @@ var areTwoInTheRow = function(){
     var upperRow = areTwo($boxes.eq(0 + bigBoxPos*9), $boxes.eq(3 + bigBoxPos*9), $boxes.eq(6 + bigBoxPos*9)),
         middleRow = areTwo($boxes.eq(1 + bigBoxPos*9), $boxes.eq(4 + bigBoxPos*9), $boxes.eq(7 + bigBoxPos*9)),
         bottomRow = areTwo($boxes.eq(2 + bigBoxPos*9), $boxes.eq(5 + bigBoxPos*9), $boxes.eq(8 + bigBoxPos*9));
-    return upperRow || (middleRow || bottomRow);
+    return upperRow + middleRow + bottomRow;
 };
 
 //Check if there is almost a Win for the X or for the O
 var areTwoInTheBox = function(){
-    return areTwoInTheColumn() || areTwoInTheDiagonal() || areTwoInTheRow();
+    return areTwoInTheColumn() + areTwoInTheDiagonal() + areTwoInTheRow();
+};
+
+function cleanContent (){
+    for(var i = 0; i < board.length; i++){
+        board[i] = ['', '', '', '', '', '', '', '', ''];
+    }
 };
 
 //Reset the variable for a new game
@@ -105,14 +116,14 @@ var resetGame = function(){
     $boxes.text("");
     $boxes.removeClass("X");
     $boxes.removeClass("O");
-    whiteEverything();
     turn = 'X';
     moves = 0;
     firstTurn = true;
+    bigBoxPos = 0;
     amountOccupied = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    dontTouchBigBox = ["", "", "", "", "", "", "", "", ""];
-    board = new Array(9);
-    constructBoard();
+    dontTouchBigBox = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    whiteEverything();
+    cleanContent();
 };
 
 //If is a multiplayer it allows to change the turn
