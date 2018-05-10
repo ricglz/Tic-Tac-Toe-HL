@@ -60,6 +60,7 @@ var apply = function($box){
         }
         resetGame();
     } else if (moves < 81){
+        dontTouchBigBox[bigBoxPos] = areTwoInTheBox();
         changeColors($box);
         changeTurn();
         if(turn === "O" && $('html').hasClass('ai')){
@@ -70,6 +71,52 @@ var apply = function($box){
         resetGame();
     }
 };
+
+var isOccupied = function(text){
+    return text === "X" || text === "0"
+}
+
+var areTwo = function($firstBox, $secondBox, $thirdBox){
+    var firstText = $firstBox.text(),
+        secondText = $secondBox.text(),
+        thirdText = $thirdBox.text();
+    if((firstText === secondText) && isOccupied(firstText) && !isOccupied(thirdText)){
+        return firstText;
+    }
+    if(firstText === thirdText && isOccupied(firstText) && !isOccupied(secondText) ){
+        return firstText;
+    }
+    if(secondText === thirdText && isOccupied(secondText) && !isOccupied(firstText))
+        return secondText;
+    return null;
+}
+
+//Check if there is a Diagnoal win
+var areTwoInTheDiagonal = function(){
+    var leftDiagonal = areTwo($boxes.eq(0 + bigBoxPos*9), $boxes.eq(4 + bigBoxPos*9), $boxes.eq(8 + bigBoxPos*9)),
+        rightDiagonal = areTwo($boxes.eq(2 + bigBoxPos*9), $boxes.eq(4 + bigBoxPos*9), $boxes.eq(6 + bigBoxPos*9));
+    return leftDiagonal || rightDiagonal;
+}
+
+//Check if there is a Column win
+var areTwoInTheColumn = function(){
+    var leftColumn = areTwo($boxes.eq(0 + bigBoxPos*9), $boxes.eq(1 + bigBoxPos*9), $boxes.eq(2 + bigBoxPos*9)),
+        middleColumn = areTwo($boxes.eq(3 + bigBoxPos*9), $boxes.eq(4 + bigBoxPos*9), $boxes.eq(5 + bigBoxPos*9)),
+        rightColumn = areTwo($boxes.eq(6 + bigBoxPos*9), $boxes.eq(7 + bigBoxPos*9), $boxes.eq(8 + bigBoxPos*9));
+    return leftColumn || (middleColumn || rightColumn);
+}
+
+//Check if there is a Row win
+var areTwoInTheRow = function(){
+    var upperRow = areTwo($boxes.eq(0 + bigBoxPos*9), $boxes.eq(3 + bigBoxPos*9), $boxes.eq(6 + bigBoxPos*9)),
+        middleRow = areTwo($boxes.eq(1 + bigBoxPos*9), $boxes.eq(4 + bigBoxPos*9), $boxes.eq(7 + bigBoxPos*9)),
+        bottomRow = areTwo($boxes.eq(2 + bigBoxPos*9), $boxes.eq(5 + bigBoxPos*9), $boxes.eq(8 + bigBoxPos*9));
+    return upperRow || (middleRow || bottomRow);
+}
+
+var areTwoInTheBox = function(){
+    return areTwoInTheColumn() || areTwoInTheDiagonal() || areTwoInTheRow();
+}
 
 //Reset the variable for a new game
 var resetGame = function(){
@@ -109,9 +156,7 @@ var allThree = function($firstBox, $secondBox, $thirdBox){
         secondText = $secondBox.text(),
         thirdText = $thirdBox.text();
     if((firstText === secondText) && (secondText===thirdText)){
-        if(firstText === "X" || firstText === "O"){
-        return firstText;
-        }
+        if(firstText === "X" || firstText === "O") return firstText;
     }
     return null;
 }

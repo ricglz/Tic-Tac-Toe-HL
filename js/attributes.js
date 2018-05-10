@@ -2,10 +2,10 @@
 
 var $bigBoxes;
 var $boxes;
-//var $lastPlay;
 var $sp;
 var $lmp;
 var xQuantitys = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+var dontTouchBigBox = ["", "", "", "", "", "", "", "", ""];
 var board = new Array(9);
 var turn = 'X';
 var moves = 0;
